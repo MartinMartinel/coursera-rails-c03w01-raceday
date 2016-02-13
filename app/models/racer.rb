@@ -78,4 +78,27 @@ class Racer
     self.class.collection.find(number: @number).delete_one
   end
 
+  def self.paginate(params)
+    #the parameters inputed will be page and limit as the offset is auto calculated
+    Rails.logger.debug {"Paginating according to #{params}"}
+    page = (params[:page] || 1).to_i
+    limit = (params[:per_page] || 30).to_i
+    offset = (page-1) * limit
+
+    #get and convert each document hash into instance of a Racer class
+    # input is prototype, sort, offset, limit
+    racers = []
+    all({}, {}, offset, limit).each do |doc|
+      racers << Racer.new(doc)
+    end
+
+    #count number of documents in total
+    total = all({}, {}, offset, limit).count
+
+    #returns a page of data
+    WillPaginate::Collection.create(page, limit, total) do |pager|
+      pager.replace(racers)
+    end
+  end
+
 end
