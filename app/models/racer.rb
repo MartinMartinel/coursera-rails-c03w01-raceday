@@ -75,7 +75,7 @@ class Racer
   def destroy
     Rails.logger.debug {"Destroying #{self} identified through #{@number}"}
     #self.class.collection.find(:_id => BSON::ObjectId.from_string(@id)).delete_one
-    self.class.collection.find(number: @number).delete_one
+    self.class.collection.find(:number => @number).delete_one
   end
 
   def self.paginate(params)
