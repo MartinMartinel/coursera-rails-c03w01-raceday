@@ -21,6 +21,18 @@ class Racer
     @secs = params[:secs].to_i
   end
 
+  def persisted?
+    !@id.nil?
+  end
+
+  def created_at
+    nil
+  end
+
+  def updated_at
+    nil
+  end
+
   def self.all(prototype={}, sort={:number=>1}, offset=0, limit=nil)
     Rails.logger.debug {"getting all racers, prototype=#{prototype}, sort=#{sort}, offset=#{offset}, limit=#{limit}"}
 
@@ -61,8 +73,9 @@ class Racer
   end
 
   def destroy
-    Rails.logger.debug {"Destroying #{self}"}
-    self.class.collection.find(:_id => BSON::ObjectId.from_string(@id)).delete_one
+    Rails.logger.debug {"Destroying #{self} identified through #{@number}"}
+    #self.class.collection.find(:_id => BSON::ObjectId.from_string(@id)).delete_one
+    self.class.collection.find(number: @number).delete_one
   end
 
 end
